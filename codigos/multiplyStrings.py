@@ -1,3 +1,6 @@
+# https://leetcode.com/problems/multiply-strings/description/
+# Algoritmo de karatsuba
+
 class Solution:
     def multiply(self, num1: str, num2: str) -> str:
         # Primeiro, lidamos com casos simples

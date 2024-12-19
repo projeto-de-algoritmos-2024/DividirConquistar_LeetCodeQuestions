@@ -1,4 +1,5 @@
 # https://leetcode.com/problems/erect-the-fence/description/
+# Algoritmo do par de pontos mais próximos + mediana das medianas
 
 from typing import List
 import concurrent.futures

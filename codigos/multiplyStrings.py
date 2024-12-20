@@ -1,130 +1,119 @@
 # https://leetcode.com/problems/multiply-strings/description/
 # Algoritmo de karatsuba
 
+# Código adaptado para usar Karatsuba internamente em binário como feito na aula,
+# mas receber e retornar números em decimal. 
+
 class Solution:
     def multiply(self, num1: str, num2: str) -> str:
-        # Primeiro, lidamos com casos simples
+        # Se um dos números é "0"
         if num1 == "0" or num2 == "0":
             return "0"
         
-        # Função para remover zeros a esquerda
+        # Função auxiliar para remover zeros à esquerda
         def remove_leading_zeros(s: str) -> str:
-            return s.lstrip('0') or "0"
-        
-        # Função para somar duas strings de números
-        def add_strings(a: str, b: str) -> str:
+            s = s.lstrip('0')
+            return s if s != '' else '0'
+
+        # Somar duas strings binárias
+        def add_binary(a: str, b: str) -> str:
             a = a[::-1]
             b = b[::-1]
             carry = 0
             result = []
-            
             for i in range(max(len(a), len(b))):
-                digit_a = int(a[i]) if i < len(a) else 0
-                digit_b = int(b[i]) if i < len(b) else 0
-                s = digit_a + digit_b + carry
-                carry = s // 10
-                result.append(str(s % 10))
-            
-            if carry > 0:
-                result.append(str(carry))
-            
-            return ''.join(result[::-1])
-        
-        # Função para subtrair duas strings de números (assumimos a >= b sem zeros a esquerda indevidos)
-        def subtract_strings(a: str, b: str) -> str:
+                bit_a = int(a[i]) if i < len(a) else 0
+                bit_b = int(b[i]) if i < len(b) else 0
+                s = bit_a + bit_b + carry
+                carry = s // 2
+                result.append(str(s % 2))
+            if carry:
+                result.append('1')
+            return remove_leading_zeros(''.join(result[::-1]))
+
+        # Subtrair b de a (a >= b), strings binárias
+        def subtract_binary(a: str, b: str) -> str:
+            # assumindo a >= b
             a = a[::-1]
             b = b[::-1]
             carry = 0
             result = []
-            
             for i in range(len(a)):
-                digit_a = int(a[i])
-                digit_b = int(b[i]) if i < len(b) else 0
-                diff = digit_a - digit_b - carry
+                bit_a = int(a[i])
+                bit_b = int(b[i]) if i < len(b) else 0
+                diff = bit_a - bit_b - carry
                 if diff < 0:
-                    diff += 10
+                    diff += 2
                     carry = 1
                 else:
                     carry = 0
                 result.append(str(diff))
-            
-            # Remover zeros a esquerda do resultado
             res = ''.join(result[::-1])
             return remove_leading_zeros(res)
-        
-        # Função para multiplicação simples (entre números pequenos)
-        def simple_multiply(a: str, b: str) -> str:
-            a = a[::-1]
-            b = b[::-1]
-            result = [0]*(len(a)+len(b))
-            
-            for i in range(len(a)):
-                for j in range(len(b)):
-                    mul = int(a[i]) * int(b[j])
-                    result[i+j] += mul
-                    result[i+j+1] += result[i+j] // 10
-                    result[i+j] = result[i+j] % 10
-            
-            # remover zeros a esquerda
-            while len(result) > 1 and result[-1] == 0:
-                result.pop()
-            
-            return ''.join(str(x) for x in result[::-1])
-        
-        # Pad de zeros a esquerda para igualar o tamanho
-        def pad_zeros(s: str, n: int) -> str:
+
+        # Multiplicação de bits (assumindo entradas de 1 bit)
+        def multiply_bits(a: str, b: str) -> str:
+            return '1' if (a == '1' and b == '1') else '0'
+
+        # Igualar tamanhos com zeros à esquerda
+        def pad_left(s: str, n: int) -> str:
             return '0'*n + s
-        
-        # Karatsuba recursivo
-        def karatsuba(x: str, y: str) -> str:
+
+        # Função principal Karatsuba em binário
+        def karatsuba_bin(x: str, y: str) -> str:
             # remover zeros a esquerda
             x = remove_leading_zeros(x)
             y = remove_leading_zeros(y)
-            
-            # se um deles for "0", resultado é "0"
-            if x == "0" or y == "0":
-                return "0"
-            
-            # Tornar os comprimentos iguais
+
+            # se um deles for 0, retorna 0
+            if x == '0' or y == '0':
+                return '0'
+
+            # Tornar tamanhos iguais
             if len(x) < len(y):
-                x = pad_zeros(x, len(y)-len(x))
+                x = pad_left(x, len(y) - len(x))
             elif len(y) < len(x):
-                y = pad_zeros(y, len(x)-len(y))
-            
+                y = pad_left(y, len(x) - len(y))
+
             n = len(x)
-            # Se o tamanho for pequeno, usar multiplicação simples
+
+            # caso base: se tamanho = 1
             if n == 1:
-                return str(int(x)*int(y))
-            
+                return multiply_bits(x, y)
+
             half = n // 2
-            
-            # Dividir em metades
+            # Dividir x e y em metades
             a = x[:n-half]
             b = x[n-half:]
             c = y[:n-half]
             d = y[n-half:]
-            
-            # ac = karatsuba(a,c)
-            ac = karatsuba(a, c)
-            # bd = karatsuba(b,d)
-            bd = karatsuba(b, d)
-            # (a+b)*(c+d)
-            ab = add_strings(a, b)
-            cd = add_strings(c, d)
-            abcd = karatsuba(ab, cd)
-            
+
+            # Calcular partes:
+            ac = karatsuba_bin(a, c)
+            bd = karatsuba_bin(b, d)
+
+            # (a+b) e (c+d)
+            ab = add_binary(a, b)
+            cd = add_binary(c, d)
+            abcd = karatsuba_bin(ab, cd)
+
             # ad + bc = abcd - ac - bd
-            adbc = subtract_strings(subtract_strings(abcd, ac), bd)
-            
-            # resultado = ac * 10^(2*half) + adbc * 10^(half) + bd
-            ac_10 = ac + '0'*(2*half) if ac != "0" else "0"
-            adbc_10 = adbc + '0'*(half) if adbc != "0" else "0"
-            
-            result = add_strings(add_strings(ac_10, adbc_10), bd)
-            return remove_leading_zeros(result)
-        
-        # Chamar Karatsuba e retornar o resultado
-        return karatsuba(num1, num2)
+            ad_bc = subtract_binary(subtract_binary(abcd, ac), bd)
+
+            # resultado = ac * 2^(2*half) + (ad+bc) * 2^(half) + bd
+            ac_2n = ac + '0'*(2*half) if ac != '0' else '0'
+            ad_bc_2_half = ad_bc + '0'*(half) if ad_bc != '0' else '0'
+
+            return remove_leading_zeros(add_binary(add_binary(ac_2n, ad_bc_2_half), bd))
+
+        # Converte num1 e num2 para binário
+        x_bin = bin(int(num1))[2:]
+        y_bin = bin(int(num2))[2:]
+
+        result_bin = karatsuba_bin(x_bin, y_bin)
+
+        # Binario convertido para int
+        return str(int(result_bin, 2))
 
 
 def runTests():

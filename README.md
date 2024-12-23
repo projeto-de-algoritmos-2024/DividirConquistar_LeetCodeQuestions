@@ -15,7 +15,7 @@ Temas:
 # Leet Code Questions
 
 **Número da Lista**: 7<br>
-**Conteúdo da Disciplina**: Grafos 1<br>
+**Conteúdo da Disciplina**: Dividir e Conquistar<br>
 
 ## Alunos
 |Matrícula | Aluno |
@@ -32,6 +32,7 @@ Temas:
 | -- | -- | -- |
 | [587. Erect the Fence](https://leetcode.com/problems/erect-the-fence/description/)  |  ***Difícil*** | [erectTheFence.py](codigos/erectTheFence.py) |
 | [43. Multiply Strings](https://leetcode.com/problems/multiply-strings/description/)  |  ***Média*** | [multiplyStrings.py](codigos/multiplyStrings.py) |
+| [493. Reverse Pairs](https://leetcode.com/problems/reverse-pairs/description/)  |  ***Difícil*** | [reversePairs.py](codigos/reversePairs.py) |
 
 ## Screenshots
 <!-- Adicione 3 ou mais screenshots do projeto em funcionamento. -->
@@ -53,6 +54,14 @@ Temas:
     - ![imagem multiply string submissao](assets/multiplyStringsSubmit.png)
 <br>
 
+### reversePairs.py
+- Rodando o arquivo python no terminal na pasta onde ele se encontra, após descomentar os testes no final do arquivo:
+    - ![imagem reverse pairs terminal](assets/reversePairsTerminal.png)
+- Rodando o arquivo no ***Leet Code*** com seus testes passando:
+    - ![imagem reverse pairs teste](assets/reversePairsTests.png)
+- Submissão aceita no ***Leet code***:
+    - ![imagem reverse pairs submissao](assets/reversePairsSubmit.png)
+<br>
 
 
 ## Instalação
@@ -68,6 +77,7 @@ Descreva os pré-requisitos para rodar o seu projeto e os comandos necessários.
     - Após ter a pasta do projeto, rode no terminal de sua máquina dentro da pasta ***Leet_Code_Questions***,  descomente a main que está comentada dos testes no final dos arquivos .py, e execute os seguintes comandos:
         - ```python3 erectTheFence.py ```<br>
         - ```python3 multiplyStrings.py ```<br>
+        - ```python3 reversePairs.py ```<br>
 
     - Para testar no ***leet code***:
         - Entre nos ***links*** presentes na tabela de questões, copie o código da questão que quer testar, e clique em ***run*** ou ***submit*** para testar os códigos ***(lembre de deixar os a main comentada para testar no leet code)***.
